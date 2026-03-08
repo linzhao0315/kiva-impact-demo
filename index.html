@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Kiva Impact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #ffffff;
+    color: #223829;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 96px 104px 80px;
+  }
+
+  .container {
+    width: 1072px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-label {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: #276a43;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .section-h2 {
+    font-family: 'Lora', serif;
+    font-size: 26px;
+    font-weight: 500;
+    color: #223829;
+    letter-spacing: -0.52px;
+    margin-bottom: 8px;
+  }
+  .section-para {
+    font-size: 16px;
+    color: #757575;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  /* ══════════════════════════════════════════
+     SECTION 1 — BORROWER CARDS
+  ══════════════════════════════════════════ */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .borrower-card {
+    background: #fff;
+    border: 1px solid #c4c4c4;
+    border-radius: 20px;
+    height: 269px;
+    overflow: hidden;
+    position: relative;
+    padding: 1px;
+  }
+
+  .card-empty {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.55s ease;
+  }
+
+  .avatar-placeholder {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .avatar-placeholder svg { width: 36px; height: 36px; opacity: 0.35; }
+
+  @keyframes shimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position: 600px 0; }
+  }
+  .skeleton {
+    position: absolute;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+    background-size: 1200px 100%;
+    animation: shimmer 1.8s infinite linear;
+  }
+  .sk-name { top: 116px; left: 82.8px; width: 176px; height: 14px; }
+  .sk-sub  { top: 136px; left: 104.85px; width: 132px; height: 10px; }
+  .sk-d1   { top: 168px; left: 24px; width: 294px; height: 8px; }
+  .sk-d2   { top: 182px; left: 24px; width: 220px; height: 8px; }
+  .sk-d3   { top: 196px; left: 24px; width: 294px; height: 8px; }
+  .sk-divider {
+    position: absolute; top: 222px; left: 24px;
+    width: 294px; height: 1px; background: #f0f0f0;
+  }
+  .sk-tag { top: 237px; left: 24px; width: 140px; height: 6px; }
+
+  .card-real {
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .card-real.visible { opacity: 1; }
+  .card-real-inner {
+    position: relative; height: 100%;
+    transform: scale(0.97);
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .card-real.visible .card-real-inner { transform: scale(1); }
+
+  .real-avatar {
+    position: absolute; top: 24px; left: 50%;
+    transform: translateX(-50%);
+    width: 72px; height: 72px;
+    border-radius: 50%; object-fit: cover; display: block;
+  }
+  .real-name {
+    position: absolute; top: 108px; left: 0; right: 0;
+    text-align: center; font-size: 15px; font-weight: 700;
+    color: #223829; line-height: 1.3;
+  }
+  .real-location {
+    position: absolute; top: 130px; left: 0; right: 0;
+    text-align: center; font-size: 13px; color: #757575;
+  }
+  .real-desc {
+    position: absolute; top: 160px; left: 24px; right: 24px;
+    font-size: 13px; color: #4a4a4a; line-height: 18px;
+  }
+  .real-tag {
+    position: absolute; bottom: 14px; left: 24px;
+    font-size: 12px; font-weight: 600;
+    border-radius: 20px; padding: 4px 12px;
+  }
+
+  /* CTA Banner */
+  .cta-banner {
+    background: #edf4f1; border-radius: 16px; height: 190px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px; padding: 32px;
+  }
+  .cta-banner p {
+    max-width: 494px; text-align: center;
+    font-size: 16px; color: #757575; line-height: 1.55;
+  }
+  .btn-green {
+    background: #276a43; color: #f5f5f5; border: none;
+    border-radius: 16px; padding: 14px 24px;
+    font-family: 'Inter', sans-serif; font-size: 17px;
+    font-weight: 600; cursor: pointer; transition: background 0.2s;
+  }
+  .btn-green:hover { background: #1e5435; }
+
+  /* ══════════════════════════════════════════
+     SECTION 2 — GLOBAL MAP
+  ══════════════════════════════════════════ */
+  .map-box {
+    /* Fresh ocean blue background */
+    background: #c8dfe8;
+    border: 1px solid #b8cdd8;
+    border-radius: 20px;
+    height: 559px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 16px;
+    box-shadow: inset 0 0 80px rgba(100,160,190,0.18);
+  }
+
+  .map-viewport {
+    width: 100%; height: 100%;
+    overflow: hidden; position: relative;
+  }
+
+  .map-world {
+    width: 1070px; height: 557px;
+    position: relative;
+    transition: transform 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center center;
+  }
+
+  /* Realistic base map image — higher opacity, no grayscale */
+  .map-base {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0.55;
+    /* subtle warm desaturation — retains geography, feels fresh */
+    filter: saturate(0.25) brightness(1.05);
+    mix-blend-mode: multiply;
+  }
+
+  /* Graticule + vignette SVG */
+  .map-graticule {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 2;
+  }
+
+  /* Vignette */
+  .map-vignette {
+    position: absolute; inset: 0; z-index: 3; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, transparent 62%, rgba(30,60,80,0.12) 100%);
+  }
+
+  .country-overlay {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.85s ease;
+    pointer-events: none;
+    z-index: 4;
+  }
+  .country-overlay.lit { opacity: 1; }
+  .country-overlay img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+
+  /* Subtle glow behind lit country */
+  .country-overlay.lit::after {
+    content: '';
+    position: absolute; inset: -6px;
+    border-radius: 4px;
+    filter: blur(8px);
+    opacity: 0.35;
+    background: inherit;
+  }
+
+  .avatar-bubble {
+    position: absolute;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 2.5px solid #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.28);
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.3) translateY(6px);
+    transition: opacity 0.45s ease,
+                transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
+  }
+  .avatar-bubble.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  .avatar-bubble img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+
+  /* Pin beneath avatar */
+  .avatar-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; left: 50%;
+    transform: translateX(-50%);
+    width: 4px; height: 6px;
+    background: white;
+    border-radius: 0 0 2px 2px;
+    opacity: 0.8;
+  }
+
+  .btn-outlined {
+    display: block; width: fit-content; margin: 0 auto;
+    background: #fff; color: #212121;
+    border: 1px solid #212121; border-radius: 16px;
+    padding: 14px 28px; font-family: 'Inter', sans-serif;
+    font-size: 16px; font-weight: 500; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-outlined:hover { background: #f5f5f5; }
+
+  /* ══════════════════════════════════════════
+     SECTION 3 — CATEGORY CHART
+  ══════════════════════════════════════════ */
+  .chart-box {
+    border: 1px solid #c4c4c4; border-radius: 20px;
+    height: 386px; position: relative; overflow: hidden;
+  }
+
+  .donut-area {
+    position: absolute; left: 52px; top: 73px;
+    width: 240px; height: 240px;
+  }
+  .donut-center-label {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center; pointer-events: none;
+  }
+  .donut-pct {
+    font-family: 'Lora', serif;
+    font-size: 36px; font-weight: 500;
+    color: #223829; display: block; line-height: 1;
+  }
+  .donut-sub {
+    font-size: 12px; color: #9e9e9e;
+    margin-top: 4px; display: block; white-space: nowrap;
+  }
+
+  #donut-svg { width: 240px; height: 240px; transform: rotate(-90deg); }
+
+  .category-list {
+    position: absolute; left: 352px; top: 32px; width: 686px;
+  }
+  .category-row {
+    display: flex; align-items: center;
+    height: 35px; border-bottom: 1px solid #f5f5f5; gap: 10px;
+  }
+  .category-row:last-child { height: 34px; border-bottom: none; }
+  .cat-dot { width: 9px; height: 9px; border-radius: 4.5px; flex-shrink: 0; }
+  .cat-name { font-size: 14px; color: #223829; flex: 1; }
+  .cat-pct {
+    font-size: 13px; color: #9e9e9e;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.4s; min-width: 38px; text-align: right;
+  }
+  .cat-pct.active { color: #223829; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="page">
+<div class="container">
+
+  <!-- ══ SECTION 1 — BORROWER SHOWCASE ══ -->
+  <section id="section-borrowers">
+    <div class="section-label">YOUR IMPACT</div>
+    <h2 class="section-h2">These are not just statistics</h2>
+    <p class="section-para">They're real people with real lives</p>
+    <div class="cards-grid" id="cards-grid"></div>
+    <div class="cta-banner">
+      <p>As your network contributes, their donations will be immediately lent to entrepreneurs around the world, and you'll see their stories populate in these cards.</p>
+      <button class="btn-green">Make your first donation</button>
+    </div>
+  </section>
+
+  <!-- ══ SECTION 2 — GLOBAL MAP ══ -->
+  <section id="section-map">
+    <div class="section-label">GLOBAL REACH</div>
+    <h2 class="section-h2">Reaching across borders</h2>
+    <p class="section-para">As donations are added to your fundraiser, this map will populate to show your global reach and the countries you're making an impact in.</p>
+
+    <div class="map-box">
+      <div class="map-viewport" id="map-viewport">
+        <div class="map-world" id="map-world">
+
+          <!-- Realistic base map from Figma (actual world geography) -->
+          <img class="map-base"
+               src="https://www.figma.com/api/mcp/asset/b8f21f74-87ba-4ea0-a9ad-c23da57886d6"
+               alt="World Map" />
+
+          <!-- Graticule lines (cartographic grid) -->
+          <svg class="map-graticule" viewBox="0 0 1070 557" xmlns="http://www.w3.org/2000/svg">
+            <!-- Latitude lines every 30° -->
+            <line x1="0" y1="93"  x2="1070" y2="93"  stroke="white" stroke-opacity="0.28" stroke-width="0.6"/>
+            <line x1="0" y1="186" x2="1070" y2="186" stroke="white" stroke-opacity="0.28" stroke-width="0.6"/>
+            <!-- Equator — slightly bolder, dashed -->
+            <line x1="0" y1="279" x2="1070" y2="279" stroke="white" stroke-opacity="0.5"  stroke-width="0.9" stroke-dasharray="5,7"/>
+            <line x1="0" y1="371" x2="1070" y2="371" stroke="white" stroke-opacity="0.28" stroke-width="0.6"/>
+            <line x1="0" y1="464" x2="1070" y2="464" stroke="white" stroke-opacity="0.28" stroke-width="0.6"/>
+            <!-- Longitude lines every 30° -->
+            <line x1="89"  y1="0" x2="89"  y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
+            <line x1="178" y1="0" x2="178" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
+            <line x1="267" y1="0" x2="267" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
+            <line x1="357" y1="0" x2="357" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
+            <line x1="446" y1="0" x2="446" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
+            <line x1="535" y1="0" x2="535" y2="557" stroke="white" stroke-opacity="0.22" stroke-width="0.6"/><!-- prime meridian -->
+            <line x1="624" y1="0" x2="624" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
+            <line x1="713" y1="0" x2="713" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
+            <line x1="803" y1="0" x2="803" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
+            <line x1="892" y1="0" x2="892" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
+            <line x1="981" y1="0" x2="981" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
+            <!-- Tropic lines (23.5°) — subtle warm tint -->
+            <line x1="0" y1="206" x2="1070" y2="206" stroke="rgba(255,220,100,0.2)" stroke-width="0.5" stroke-dasharray="3,9"/>
+            <line x1="0" y1="352" x2="1070" y2="352" stroke="rgba(255,220,100,0.2)" stroke-width="0.5" stroke-dasharray="3,9"/>
+          </svg>
+
+          <!-- Vignette -->
+          <div class="map-vignette"></div>
+
+          <!-- ── COUNTRY COLOR OVERLAYS ── -->
+          <!-- South America -->
+          <div class="country-overlay" id="co-colombia" style="top:53.2%;right:75.83%;bottom:40.4%;left:20.21%;">
+            <img src="https://www.figma.com/api/mcp/asset/9df7b913-784d-41cc-a0c2-2befce9ba7a0" alt="Colombia"/>
+          </div>
+          <div class="country-overlay" id="co-ecuador" style="top:58.4%;right:77.71%;bottom:36.8%;left:20%;">
+            <img src="https://www.figma.com/api/mcp/asset/69ff3524-62d4-4562-a1ff-30992476bd6f" alt="Ecuador"/>
+          </div>
+          <div class="country-overlay" id="co-peru" style="top:62%;right:76.04%;bottom:29.6%;left:19.38%;">
+            <img src="https://www.figma.com/api/mcp/asset/bb062bd3-a2c8-40aa-97b9-713b2db265b6" alt="Peru"/>
+          </div>
+          <div class="country-overlay" id="co-bolivia" style="top:66.4%;right:74.58%;bottom:27.6%;left:21.88%;">
+            <img src="https://www.figma.com/api/mcp/asset/4a0ee7b8-523f-4678-820b-cf81bf1c70c7" alt="Bolivia"/>
+          </div>
+          <!-- Africa -->
+          <div class="country-overlay" id="co-senegal" style="top:36%;right:53.54%;bottom:58.4%;left:42.92%;">
+            <img src="https://www.figma.com/api/mcp/asset/887c8f1f-dc3f-484d-b71b-a85252f0a95b" alt="Senegal"/>
+          </div>
+          <div class="country-overlay" id="co-ghana" style="top:42.4%;right:50.62%;bottom:51.6%;left:45.63%;">
+            <img src="https://www.figma.com/api/mcp/asset/a3d85378-a0da-4590-b88e-5906dd86902e" alt="Ghana"/>
+          </div>
+          <div class="country-overlay" id="co-uganda" style="top:42.4%;right:41.88%;bottom:51.6%;left:54.58%;">
+            <img src="https://www.figma.com/api/mcp/asset/8d53b928-56b8-4328-9ae0-3dfd7b80f43f" alt="Uganda"/>
+          </div>
+          <div class="country-overlay" id="co-kenya" style="top:42%;right:39.58%;bottom:49.6%;left:56.25%;">
+            <img src="https://www.figma.com/api/mcp/asset/dc0222ae-65aa-458f-a04b-99fb6a8b8939" alt="Kenya"/>
+          </div>
+          <div class="country-overlay" id="co-rwanda" style="top:47.2%;right:42.92%;bottom:48.8%;left:54.79%;">
+            <img src="https://www.figma.com/api/mcp/asset/d3525b77-e413-48d9-8e8a-c89c5515828e" alt="Rwanda"/>
+          </div>
+          <div class="country-overlay" id="co-tanzania" style="top:49.6%;right:39.79%;bottom:43.2%;left:55.62%;">
+            <img src="https://www.figma.com/api/mcp/asset/f062ffc0-2427-456d-b2dd-11b368577186" alt="Tanzania"/>
+          </div>
+          <!-- Asia -->
+          <div class="country-overlay" id="co-tajikistan" style="top:25.6%;right:30.42%;bottom:68.8%;left:66.04%;">
+            <img src="https://www.figma.com/api/mcp/asset/58b3b87f-de46-4a2c-8d64-da56bb01bb29" alt="Tajikistan"/>
+          </div>
+          <div class="country-overlay" id="co-kyrgyzstan" style="top:23.2%;right:27.71%;bottom:71.2%;left:68.96%;">
+            <img src="https://www.figma.com/api/mcp/asset/bd143344-0f64-494a-8568-9b3490e58b24" alt="Kyrgyzstan"/>
+          </div>
+          <div class="country-overlay" id="co-india" style="top:30.8%;right:26.46%;bottom:52%;left:66.04%;">
+            <img src="https://www.figma.com/api/mcp/asset/ba1e8e11-c785-4788-bec5-fb419163706b" alt="India"/>
+          </div>
+          <div class="country-overlay" id="co-cambodia" style="top:42%;right:17.71%;bottom:52%;left:78.54%;">
+            <img src="https://www.figma.com/api/mcp/asset/f5d9163f-ce8c-4109-bcee-6f3bb56b95f9" alt="Cambodia"/>
+          </div>
+          <div class="country-overlay" id="co-philippines" style="top:38.8%;right:9.79%;bottom:54.4%;left:86.46%;">
+            <img src="https://www.figma.com/api/mcp/asset/9a63b232-392f-4146-98f4-40cef1308b53" alt="Philippines"/>
+          </div>
+
+          <!-- ── AVATAR BUBBLES ── -->
+          <div class="avatar-bubble" id="av-colombia" style="left:217px;top:286px;">
+            <img src="https://ui-avatars.com/api/?name=Maria+S&background=f4b539&color=fff&size=40&bold=true" alt="Maria"/>
+          </div>
+          <div class="avatar-bubble" id="av-peru" style="left:211px;top:340px;">
+            <img src="https://ui-avatars.com/api/?name=Rosa+L&background=276a43&color=fff&size=40&bold=true" alt="Rosa"/>
+          </div>
+          <div class="avatar-bubble" id="av-senegal" style="left:457px;top:188px;">
+            <img src="https://ui-avatars.com/api/?name=Amara+D&background=2aa967&color=fff&size=40&bold=true" alt="Amara"/>
+          </div>
+          <div class="avatar-bubble" id="av-kenya" style="left:603px;top:229px;">
+            <img src="https://ui-avatars.com/api/?name=Wanjiru+M&background=276a43&color=fff&size=40&bold=true" alt="Wanjiru"/>
+          </div>
+          <div class="avatar-bubble" id="av-india" style="left:726px;top:191px;">
+            <img src="https://ui-avatars.com/api/?name=Priya+S&background=f4b539&color=fff&size=40&bold=true" alt="Priya"/>
+          </div>
+          <div class="avatar-bubble" id="av-philippines" style="left:924px;top:207px;">
+            <img src="https://ui-avatars.com/api/?name=Lena+C&background=4ab67e&color=fff&size=40&bold=true" alt="Lena"/>
+          </div>
+
+        </div><!-- /.map-world -->
+      </div><!-- /.map-viewport -->
+    </div><!-- /.map-box -->
+
+    <button class="btn-outlined">Donate to see your global impact light up</button>
+  </section>
+
+  <!-- ══ SECTION 3 — CATEGORY CHART ══ -->
+  <section id="section-chart">
+    <div class="section-label">SECTOR DIVERSITY</div>
+    <h2 class="section-h2">Reaching across categories</h2>
+    <p class="section-para">As you donate to more types of categories, this chart will fill up to show the diversity of your impact across different sectors.</p>
+
+    <div class="chart-box">
+      <div class="donut-area">
+        <svg id="donut-svg" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="120" cy="120" r="100" fill="none" stroke="#f0f0f0" stroke-width="32"/>
+          <g id="donut-segments"></g>
+        </svg>
+        <div class="donut-center-label" id="donut-center">
+          <span class="donut-pct" id="donut-pct-text">0%</span>
+          <span class="donut-sub" id="donut-sub-text">No categories yet</span>
+        </div>
+      </div>
+      <div class="category-list" id="category-list"></div>
+    </div>
+  </section>
+
+</div><!-- /.container -->
+</div><!-- /.page -->
+
+<script>
+// ─────────────────────────────────────────────────────────
+// CANCELLABLE TIMER — lets us break out of sleep() instantly
+// ─────────────────────────────────────────────────────────
+class CancellableTimer {
+  constructor() { this._pending = []; }
+
+  sleep(ms) {
+    return new Promise((resolve, reject) => {
+      const id = setTimeout(resolve, ms);
+      this._pending.push({ id, reject });
+    });
+  }
+
+  cancel() {
+    this._pending.forEach(({ id, reject }) => {
+      clearTimeout(id);
+      reject(new Error('cancelled'));
+    });
+    this._pending = [];
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// SECTION ANIMATOR — starts/stops a loop, resets on stop
+// ─────────────────────────────────────────────────────────
+class SectionAnimator {
+  constructor(loopFn, resetFn) {
+    this._loopFn  = loopFn;
+    this._resetFn = resetFn;
+    this._timer   = null;
+    this._running = false;
+  }
+
+  start() {
+    if (this._running) return;
+    this._running = true;
+    this._timer = new CancellableTimer();
+    this._loopFn(this._timer).catch(() => {}).finally(() => {
+      this._running = false;
+    });
+  }
+
+  stop() {
+    if (this._timer) this._timer.cancel();
+    this._timer = null;
+    this._running = false;
+    this._resetFn();
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────────────────
+const borrowers = [
+  {
+    name: 'Maria Santos',
+    location: 'Lima, Peru 🇵🇪',
+    desc: 'Expanding her small textile shop to support her family and hire local weavers.',
+    category: 'Retail', color: '#f4b539',
+    avatar: 'https://ui-avatars.com/api/?name=Maria+Santos&background=f4b539&color=fff&size=72&bold=true'
+  },
+  {
+    name: 'Amara Diallo',
+    location: 'Dakar, Senegal 🇸🇳',
+    desc: 'Growing her farm to feed the community and send three children to school.',
+    category: 'Agriculture', color: '#2aa967',
+    avatar: 'https://ui-avatars.com/api/?name=Amara+Diallo&background=2aa967&color=fff&size=72&bold=true'
+  },
+  {
+    name: 'Priya Sharma',
+    location: 'Mumbai, India 🇮🇳',
+    desc: 'Opening a neighborhood beauty salon to achieve financial independence.',
+    category: 'Services', color: '#4ab67e',
+    avatar: 'https://ui-avatars.com/api/?name=Priya+Sharma&background=4ab67e&color=fff&size=72&bold=true'
+  },
+];
+
+const categories = [
+  { name:'Agriculture',        color:'#2aa967', pct:28 },
+  { name:'Retail',             color:'#f4b539', pct:20 },
+  { name:'Wholesale',          color:'#dfd0bc', pct:12 },
+  { name:'Arts',               color:'#c45f4f', pct:8  },
+  { name:'Services',           color:'#4ab67e', pct:10 },
+  { name:'Clothing',           color:'#f8cd69', pct:6  },
+  { name:'Health',             color:'#e0988d', pct:5  },
+  { name:'Transportation',     color:'#aa9e8d', pct:4  },
+  { name:'Education',          color:'#95d4b3', pct:3  },
+  { name:'Re-use and recycle', color:'#78c79f', pct:2  },
+  { name:'Clean energy',       color:'#276a43', pct:1  },
+  { name:'Construction',       color:'#635544', pct:1  },
+  { name:'Housing',            color:'#26985d', pct:0  },
+];
+
+// ─────────────────────────────────────────────────────────
+// BUILD DOM
+// ─────────────────────────────────────────────────────────
+function buildCards() {
+  const grid = document.getElementById('cards-grid');
+  borrowers.forEach((b, i) => {
+    const card = document.createElement('div');
+    card.className = 'borrower-card';
+    card.innerHTML = `
+      <div class="card-empty" id="card-empty-${i}">
+        <div class="avatar-placeholder">
+          <svg viewBox="0 0 36 36" fill="none">
+            <circle cx="18" cy="14" r="7" fill="#bdbdbd"/>
+            <path d="M4 32c0-7.732 6.268-14 14-14s14 6.268 14 14"
+                  stroke="#bdbdbd" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="skeleton sk-name"></div>
+        <div class="skeleton sk-sub"></div>
+        <div class="skeleton sk-d1"></div>
+        <div class="skeleton sk-d2"></div>
+        <div class="skeleton sk-d3"></div>
+        <div class="sk-divider"></div>
+        <div class="skeleton sk-tag"></div>
+      </div>
+      <div class="card-real" id="card-real-${i}">
+        <div class="card-real-inner">
+          <img class="real-avatar" src="${b.avatar}" alt="${b.name}">
+          <div class="real-name">${b.name}</div>
+          <div class="real-location">${b.location}</div>
+          <div class="real-desc">${b.desc}</div>
+          <span class="real-tag"
+            style="background:${b.color}22;
+                   color:${b.color === '#f4b539' ? '#7a5a00' : b.color};
+                   border:1px solid ${b.color}55;">${b.category}</span>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function buildCategoryList() {
+  const list = document.getElementById('category-list');
+  categories.forEach((cat, i) => {
+    const row = document.createElement('div');
+    row.className = 'category-row';
+    row.innerHTML = `
+      <div class="cat-dot" style="background:${cat.color}"></div>
+      <div class="cat-name">${cat.name}</div>
+      <div class="cat-pct" id="cat-pct-${i}">0%</div>`;
+    list.appendChild(row);
+  });
+}
+
+// ─────────────────────────────────────────────────────────
+// SECTION 1 — CARDS
+// ─────────────────────────────────────────────────────────
+function resetCards() {
+  for (let i = 0; i < 3; i++) {
+    const empty = document.getElementById(`card-empty-${i}`);
+    const real  = document.getElementById(`card-real-${i}`);
+    if (empty) empty.style.opacity = '1';
+    if (real)  real.classList.remove('visible');
+  }
+}
+
+function revealCard(i) {
+  const empty = document.getElementById(`card-empty-${i}`);
+  const real  = document.getElementById(`card-real-${i}`);
+  if (empty) empty.style.opacity = '0';
+  if (real)  real.classList.add('visible');
+}
+
+async function cardsLoop(timer) {
+  while (true) {
+    resetCards();
+    await timer.sleep(1400);
+    revealCard(0);
+    await timer.sleep(1900);
+    revealCard(1);
+    await timer.sleep(1900);
+    revealCard(2);
+    await timer.sleep(2800);
+    await timer.sleep(600);
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// SECTION 2 — MAP
+// ─────────────────────────────────────────────────────────
+const SA  = ['colombia','ecuador','peru','bolivia'];
+const AFR = ['senegal','ghana','uganda','kenya','rwanda','tanzania'];
+const AS  = ['tajikistan','kyrgyzstan','india','cambodia','philippines'];
+
+function setLit(ids, on) {
+  ids.forEach(id => {
+    const el = document.getElementById(`co-${id}`);
+    if (el) el.classList.toggle('lit', on);
+  });
+}
+function setAvatar(id, on) {
+  const el = document.getElementById(`av-${id}`);
+  if (el) el.classList.toggle('visible', on);
+}
+
+function resetMap() {
+  [...SA, ...AFR, ...AS].forEach(id => setLit([id], false));
+  ['colombia','peru','senegal','kenya','india','philippines'].forEach(id => setAvatar(id, false));
+  const w = document.getElementById('map-world');
+  if (w) { w.style.transition = 'none'; w.style.transform = 'none'; }
+}
+
+async function mapLoop(timer) {
+  while (true) {
+    resetMap();
+    await timer.sleep(900);
+
+    // South America
+    setLit(SA, true);
+    await timer.sleep(380); setAvatar('colombia', true);
+    await timer.sleep(380); setAvatar('peru', true);
+    await timer.sleep(1100);
+
+    // Africa
+    setLit(AFR, true);
+    await timer.sleep(380); setAvatar('senegal', true);
+    await timer.sleep(380); setAvatar('kenya', true);
+    await timer.sleep(1500);
+
+    // Pan to Asia
+    const w = document.getElementById('map-world');
+    if (w) {
+      w.style.transition = 'transform 1.8s cubic-bezier(0.4,0,0.2,1)';
+      w.style.transform  = 'scale(1.22) translateX(-14%)';
+    }
+    await timer.sleep(1600);
+
+    // Asia
+    setLit(AS, true);
+    await timer.sleep(380); setAvatar('india', true);
+    await timer.sleep(380); setAvatar('philippines', true);
+    await timer.sleep(3000);
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// SECTION 3 — CHART
+// ─────────────────────────────────────────────────────────
+let currentPcts = categories.map(() => 0);
+let donutRafId  = null;
+
+function buildDonut(pcts) {
+  const segs = document.getElementById('donut-segments');
+  if (!segs) return;
+  segs.innerHTML = '';
+  const R = 100, C = 2 * Math.PI * R;
+  let offset = 0;
+
+  pcts.forEach((p, i) => {
+    if (p <= 0) return;
+    const frac = p / 100;
+    const dash = frac * C;
+    const el = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    el.setAttribute('cx', '120'); el.setAttribute('cy', '120'); el.setAttribute('r', R);
+    el.setAttribute('fill', 'none');
+    el.setAttribute('stroke', categories[i].color);
+    el.setAttribute('stroke-width', '32');
+    el.setAttribute('stroke-dasharray', `${dash} ${C - dash}`);
+    el.setAttribute('stroke-dashoffset', (-offset * C).toString());
+    segs.appendChild(el);
+    offset += frac;
+  });
+
+  const total = Math.round(pcts.reduce((a,b) => a+b, 0));
+  const active = pcts.filter(p => p > 0).length;
+  const pEl = document.getElementById('donut-pct-text');
+  const sEl = document.getElementById('donut-sub-text');
+  if (pEl) pEl.textContent = total + '%';
+  if (sEl) sEl.textContent = total === 0 ? 'No categories yet'
+                            : active === 1 ? '1 category' : `${active} categories`;
+}
+
+function animateDonutTo(targets, dur) {
+  if (donutRafId) cancelAnimationFrame(donutRafId);
+  const from = [...currentPcts];
+  const t0 = performance.now();
+
+  const tick = (now) => {
+    const p = Math.min((now - t0) / dur, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    const next = from.map((s, i) => s + (targets[i] - s) * e);
+    currentPcts = next;
+    buildDonut(next);
+    next.forEach((v, i) => {
+      const el = document.getElementById(`cat-pct-${i}`);
+      if (!el) return;
+      el.textContent = Math.round(v) + '%';
+      el.classList.toggle('active', Math.round(v) > 0);
+    });
+    if (p < 1) donutRafId = requestAnimationFrame(tick);
+  };
+  donutRafId = requestAnimationFrame(tick);
+}
+
+function resetChart() {
+  if (donutRafId) cancelAnimationFrame(donutRafId);
+  currentPcts = categories.map(() => 0);
+  buildDonut(currentPcts);
+  categories.forEach((_, i) => {
+    const el = document.getElementById(`cat-pct-${i}`);
+    if (el) { el.textContent = '0%'; el.classList.remove('active'); }
+  });
+}
+
+async function chartLoop(timer) {
+  while (true) {
+    resetChart();
+    await timer.sleep(900);
+
+    // Wave 1: first 4
+    animateDonutTo(categories.map((c,i) => i < 4  ? c.pct : 0), 1100);
+    await timer.sleep(2400);
+
+    // Wave 2: first 8
+    animateDonutTo(categories.map((c,i) => i < 8  ? c.pct : 0), 1100);
+    await timer.sleep(2400);
+
+    // Wave 3: all
+    animateDonutTo(categories.map(c => c.pct), 1100);
+    await timer.sleep(2800);
+
+    await timer.sleep(500);
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// INTERSECTION OBSERVER — scroll-triggered start/stop
+// ─────────────────────────────────────────────────────────
+const cardsAnimator = new SectionAnimator(cardsLoop, resetCards);
+const mapAnimator   = new SectionAnimator(mapLoop,   resetMap);
+const chartAnimator = new SectionAnimator(chartLoop, resetChart);
+
+const sectionMap = {
+  'section-borrowers': cardsAnimator,
+  'section-map':       mapAnimator,
+  'section-chart':     chartAnimator,
+};
+
+// Trigger when >= 25% of the section is visible
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const animator = sectionMap[entry.target.id];
+    if (!animator) return;
+    if (entry.isIntersecting) animator.start();
+    else                       animator.stop();
+  });
+}, { threshold: 0.25 });
+
+Object.keys(sectionMap).forEach(id => {
+  const el = document.getElementById(id);
+  if (el) io.observe(el);
+});
+
+// ─────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────
+buildCards();
+buildCategoryList();
+buildDonut(currentPcts);
+</script>
+</body>
+</html>
