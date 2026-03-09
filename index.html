@@ -222,6 +222,43 @@
     background: radial-gradient(ellipse at 50% 50%, transparent 62%, rgba(30,60,80,0.12) 100%);
   }
 
+  /* ── MAP LABELS ── */
+  .map-label {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.7s ease 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 8;
+  }
+  .map-label.lit { opacity: 1; }
+
+  /* Country name pill */
+  .country-label {
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 20px;
+    padding: 2px 8px 2.5px;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: #223829;
+    letter-spacing: 0.02em;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.14);
+  }
+
+  /* Region header — uppercase text floating on map */
+  .region-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.92);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.45),
+                 0 0 16px rgba(0,0,0,0.25);
+    transition: opacity 0.7s ease 0s; /* region appears instantly */
+  }
+
   .country-overlay {
     position: absolute;
     opacity: 0;
@@ -465,6 +502,31 @@
             <img src="https://randomuser.me/api/portraits/women/55.jpg" alt="Lena"/>
           </div>
 
+          <!-- ── REGION LABELS ── -->
+          <div class="map-label region-label" id="lbl-region-sa"     style="left:148px; top:268px;">SOUTH AMERICA</div>
+          <div class="map-label region-label" id="lbl-region-africa"  style="left:468px; top:160px;">AFRICA</div>
+          <div class="map-label region-label" id="lbl-region-asia"    style="left:815px; top:112px;">ASIA</div>
+
+          <!-- ── COUNTRY LABELS ── -->
+          <!-- South America -->
+          <div class="map-label country-label" id="lbl-colombia"   style="left:266px; top:308px;">Colombia</div>
+          <div class="map-label country-label" id="lbl-ecuador"    style="left:249px; top:335px;">Ecuador</div>
+          <div class="map-label country-label" id="lbl-peru"       style="left:265px; top:362px;">Peru</div>
+          <div class="map-label country-label" id="lbl-bolivia"    style="left:282px; top:382px;">Bolivia</div>
+          <!-- Africa -->
+          <div class="map-label country-label" id="lbl-senegal"    style="left:505px; top:210px;">Senegal</div>
+          <div class="map-label country-label" id="lbl-ghana"      style="left:534px; top:247px;">Ghana</div>
+          <div class="map-label country-label" id="lbl-uganda"     style="left:630px; top:247px;">Uganda</div>
+          <div class="map-label country-label" id="lbl-kenya"      style="left:654px; top:252px;">Kenya</div>
+          <div class="map-label country-label" id="lbl-rwanda"     style="left:617px; top:270px;">Rwanda</div>
+          <div class="map-label country-label" id="lbl-tanzania"   style="left:652px; top:289px;">Tanzania</div>
+          <!-- Asia -->
+          <div class="map-label country-label" id="lbl-tajikistan"  style="left:752px; top:148px;">Tajikistan</div>
+          <div class="map-label country-label" id="lbl-kyrgyzstan"  style="left:783px; top:133px;">Kyrgyzstan</div>
+          <div class="map-label country-label" id="lbl-india"       style="left:800px; top:212px;">India</div>
+          <div class="map-label country-label" id="lbl-cambodia"    style="left:892px; top:260px;">Cambodia</div>
+          <div class="map-label country-label" id="lbl-philippines" style="left:878px; top:225px;">Philippines</div>
+
         </div><!-- /.map-world -->
       </div><!-- /.map-viewport -->
     </div><!-- /.map-box -->
@@ -686,8 +748,11 @@ const AS  = ['tajikistan','kyrgyzstan','india','cambodia','philippines'];
 
 function setLit(ids, on) {
   ids.forEach(id => {
-    const el = document.getElementById(`co-${id}`);
-    if (el) el.classList.toggle('lit', on);
+    const co  = document.getElementById(`co-${id}`);
+    if (co)  co.classList.toggle('lit', on);
+    // also toggle the matching country label
+    const lbl = document.getElementById(`lbl-${id}`);
+    if (lbl) lbl.classList.toggle('lit', on);
   });
 }
 function setAvatar(id, on) {
@@ -698,6 +763,11 @@ function setAvatar(id, on) {
 function resetMap() {
   [...SA, ...AFR, ...AS].forEach(id => setLit([id], false));
   ['colombia','peru','senegal','kenya','india','philippines'].forEach(id => setAvatar(id, false));
+  // clear region labels
+  ['lbl-region-sa','lbl-region-africa','lbl-region-asia'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('lit');
+  });
   const w = document.getElementById('map-world');
   if (w) { w.style.transition = 'none'; w.style.transform = 'none'; }
 }
@@ -708,12 +778,14 @@ async function mapLoop(timer) {
     await timer.sleep(900);
 
     // South America
+    document.getElementById('lbl-region-sa')?.classList.add('lit');
     setLit(SA, true);
     await timer.sleep(380); setAvatar('colombia', true);
     await timer.sleep(380); setAvatar('peru', true);
     await timer.sleep(1100);
 
     // Africa
+    document.getElementById('lbl-region-africa')?.classList.add('lit');
     setLit(AFR, true);
     await timer.sleep(380); setAvatar('senegal', true);
     await timer.sleep(380); setAvatar('kenya', true);
@@ -728,6 +800,7 @@ async function mapLoop(timer) {
     await timer.sleep(1600);
 
     // Asia
+    document.getElementById('lbl-region-asia')?.classList.add('lit');
     setLit(AS, true);
     await timer.sleep(380); setAvatar('india', true);
     await timer.sleep(380); setAvatar('philippines', true);
