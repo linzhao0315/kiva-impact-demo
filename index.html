@@ -209,8 +209,8 @@
      SECTION 2 — GLOBAL MAP
   ══════════════════════════════════════════ */
   .map-box {
-    background: #1a2a3a;
-    border: 1px solid #0f1e2c;
+    background: #d6e9f5;
+    border: 1px solid #b8d4e8;
     border-radius: 20px;
     height: 559px;
     overflow: hidden;
@@ -938,26 +938,27 @@ async function mapLoop(timer) {
 
     // ── South America ──
     document.getElementById('lbl-region-sa')?.classList.add('lit');
-    await new Promise(resolve => rotateTo(REGION_ROTATION.sa, 1800, resolve));
-    setLit(SA, true);
-    await timer.sleep(300); setAvatar('colombia', true);
-    await timer.sleep(350); setAvatar('peru', true);
-    await timer.sleep(1200);
+    rotateTo(REGION_ROTATION.sa, 1800, null);
+    await timer.sleep(1800);
+    // Countries + avatars light up together, staggered per borrower
+    setLit(SA, true); setAvatar('colombia', true);
+    await timer.sleep(380); setAvatar('peru', true);
+    await timer.sleep(1400);
 
     // ── Africa ──
     document.getElementById('lbl-region-africa')?.classList.add('lit');
-    await new Promise(resolve => rotateTo(REGION_ROTATION.africa, 2000, resolve));
-    setLit(AFR, true);
-    await timer.sleep(300); setAvatar('senegal', true);
-    await timer.sleep(350); setAvatar('kenya', true);
-    await timer.sleep(1400);
+    rotateTo(REGION_ROTATION.africa, 2000, null);
+    await timer.sleep(2000);
+    setLit(AFR, true); setAvatar('senegal', true);
+    await timer.sleep(380); setAvatar('kenya', true);
+    await timer.sleep(1600);
 
     // ── Asia ──
     document.getElementById('lbl-region-asia')?.classList.add('lit');
-    await new Promise(resolve => rotateTo(REGION_ROTATION.asia, 2000, resolve));
-    setLit(AS, true);
-    await timer.sleep(300); setAvatar('india', true);
-    await timer.sleep(350); setAvatar('philippines', true);
+    rotateTo(REGION_ROTATION.asia, 2000, null);
+    await timer.sleep(2000);
+    setLit(AS, true); setAvatar('india', true);
+    await timer.sleep(380); setAvatar('philippines', true);
     await timer.sleep(3000);
   }
 }
