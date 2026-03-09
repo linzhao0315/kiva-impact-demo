@@ -4,14 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Your Kiva Impact</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'Kiva Post Grotesk';
+    src: url('fonts/KivaPostGrot-Book.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Kiva Post Grotesk';
+    src: url('fonts/KivaPostGrot-Medium.woff') format('woff');
+    font-weight: 500 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Kiva Post Grotesk';
+    src: url('fonts/KivaPostGrot-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Dovetail MVB';
+    src: url('fonts/DovetailMVB-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Dovetail MVB';
+    src: url('fonts/DovetailMVB-Medium.otf') format('opentype');
+    font-weight: 500 600;
+    font-style: normal;
+    font-display: swap;
+  }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Kiva Post Grotesk', sans-serif;
     background: #ffffff;
     color: #223829;
     -webkit-font-smoothing: antialiased;
@@ -41,7 +74,7 @@
     margin-bottom: 8px;
   }
   .section-h2 {
-    font-family: 'Lora', serif;
+    font-family: 'Dovetail MVB', serif;
     font-size: 26px;
     font-weight: 500;
     color: #223829;
@@ -167,7 +200,7 @@
   .btn-green {
     background: #276a43; color: #f5f5f5; border: none;
     border-radius: 16px; padding: 14px 24px;
-    font-family: 'Inter', sans-serif; font-size: 17px;
+    font-family: 'Kiva Post Grotesk', sans-serif; font-size: 17px;
     font-weight: 600; cursor: pointer; transition: background 0.2s;
   }
   .btn-green:hover { background: #1e5435; }
@@ -319,7 +352,7 @@
     display: block; width: fit-content; margin: 0 auto;
     background: #fff; color: #212121;
     border: 1px solid #212121; border-radius: 16px;
-    padding: 14px 28px; font-family: 'Inter', sans-serif;
+    padding: 14px 28px; font-family: 'Kiva Post Grotesk', sans-serif;
     font-size: 16px; font-weight: 500; cursor: pointer;
     transition: background 0.2s;
   }
@@ -343,7 +376,7 @@
     text-align: center; pointer-events: none;
   }
   .donut-pct {
-    font-family: 'Lora', serif;
+    font-family: 'Dovetail MVB', serif;
     font-size: 36px; font-weight: 500;
     color: #223829; display: block; line-height: 1;
   }
