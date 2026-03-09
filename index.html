@@ -209,15 +209,13 @@
      SECTION 2 — GLOBAL MAP
   ══════════════════════════════════════════ */
   .map-box {
-    /* Fresh ocean blue background */
-    background: #c8dfe8;
-    border: 1px solid #b8cdd8;
+    background: #1a2a3a;
+    border: 1px solid #0f1e2c;
     border-radius: 20px;
     height: 559px;
     overflow: hidden;
     position: relative;
     margin-bottom: 16px;
-    box-shadow: inset 0 0 80px rgba(100,160,190,0.18);
   }
 
   .map-viewport {
@@ -225,46 +223,17 @@
     overflow: hidden; position: relative;
   }
 
-  .map-world {
-    width: 1070px; height: 557px;
-    position: relative;
-    transition: transform 1.8s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: center center;
-  }
-
-  /* Realistic base map image — higher opacity, no grayscale */
-  .map-base {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%; object-fit: cover;
-    opacity: 0.55;
-    /* subtle warm desaturation — retains geography, feels fresh */
-    filter: saturate(0.25) brightness(1.05);
-    mix-blend-mode: multiply;
-  }
-
-  /* Graticule + vignette SVG */
-  .map-graticule {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    pointer-events: none; z-index: 2;
-  }
-
-  /* Vignette */
-  .map-vignette {
-    position: absolute; inset: 0; z-index: 3; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 50%, transparent 62%, rgba(30,60,80,0.12) 100%);
-  }
-
   /* ── MAP LABELS ── */
   .map-label {
     position: absolute;
     opacity: 0;
-    transition: opacity 0.7s ease 0.25s;
+    transform: translateY(4px);
+    transition: opacity 0.6s ease 0.2s, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s;
     pointer-events: none;
     white-space: nowrap;
     z-index: 8;
   }
-  .map-label.lit { opacity: 1; }
+  .map-label.lit { opacity: 1; transform: translateY(0); }
 
   /* Country name pill */
   .country-label {
@@ -277,75 +246,42 @@
     font-weight: 600;
     color: #223829;
     letter-spacing: 0.02em;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.14);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    transform: translateX(-50%) translateY(4px);
   }
+  .country-label.lit { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* Region header — uppercase text floating on map */
   .region-label {
     font-size: 10px;
     font-weight: 700;
-    color: rgba(255,255,255,0.92);
+    color: rgba(255,255,255,0.85);
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.45),
-                 0 0 16px rgba(0,0,0,0.25);
-    transition: opacity 0.7s ease 0s; /* region appears instantly */
+    text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+    transform: translateX(-50%) translateY(4px);
   }
-
-  .country-overlay {
-    position: absolute;
-    opacity: 0;
-    transition: opacity 0.85s ease;
-    pointer-events: none;
-    z-index: 4;
-  }
-  .country-overlay.lit { opacity: 1; }
-  .country-overlay img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-  }
-
-  /* Subtle glow behind lit country */
-  .country-overlay.lit::after {
-    content: '';
-    position: absolute; inset: -6px;
-    border-radius: 4px;
-    filter: blur(8px);
-    opacity: 0.35;
-    background: inherit;
-  }
+  .region-label.lit { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   .avatar-bubble {
     position: absolute;
     width: 40px; height: 40px;
     border-radius: 50%;
     border: 2.5px solid #fff;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.28);
-    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    overflow: visible;
     opacity: 0;
-    transform: scale(0.3) translateY(6px);
-    transition: opacity 0.45s ease,
-                transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: scale(0.15) translateY(8px);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.7, 0.64, 1);
     z-index: 10;
+    pointer-events: none;
   }
   .avatar-bubble.visible {
     opacity: 1;
     transform: scale(1) translateY(0);
   }
   .avatar-bubble img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-  }
-
-  /* Pin beneath avatar */
-  .avatar-bubble::after {
-    content: '';
-    position: absolute;
-    bottom: -6px; left: 50%;
-    transform: translateX(-50%);
-    width: 4px; height: 6px;
-    background: white;
-    border-radius: 0 0 2px 2px;
-    opacity: 0.8;
+    width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%;
   }
 
   .btn-outlined {
@@ -454,19 +390,7 @@
     transition: box-shadow 0.5s ease;
   }
 
-  /* ── Country overlay: pulsing glow when lit ── */
-  @keyframes country-pulse {
-    0%, 100% { filter: drop-shadow(0 0 4px rgba(42,169,103,0.40)); }
-    50%       { filter: drop-shadow(0 0 14px rgba(42,169,103,0.80)); }
-  }
-  .country-overlay.lit {
-    animation: country-pulse 2.8s ease-in-out infinite;
-  }
-  /* override the static ::after glow — pulse handles it */
-  .country-overlay.lit::after { display: none; }
-
   /* ── Avatar bubble: overflow visible for pulse ring ── */
-  .avatar-bubble { overflow: visible; }
   @keyframes av-pulse-ring {
     0%   { transform: scale(1); opacity: 0.65; }
     75%  { transform: scale(2.5); opacity: 0; }
@@ -483,17 +407,6 @@
   }
   .avatar-bubble.visible::before {
     animation: av-pulse-ring 2.2s ease-out 0.35s infinite;
-  }
-
-  /* ── Avatar entrance: more dramatic spring ── */
-  .avatar-bubble {
-    transform: scale(0.15) translateY(8px);
-    transition: opacity 0.5s ease,
-                transform 0.5s cubic-bezier(0.34, 1.7, 0.64, 1);
-  }
-  .avatar-bubble.visible {
-    opacity: 1;
-    transform: scale(1) translateY(0);
   }
 
   /* ── Category row: spring slide-in from left ── */
@@ -534,128 +447,31 @@
     <p class="section-para">As donations are added to your fundraiser, this map will populate to show your global reach and the countries you're making an impact in.</p>
 
     <div class="map-box">
-      <div class="map-viewport" id="map-viewport">
-        <div class="map-world" id="map-world">
+      <div class="map-viewport" id="map-viewport" style="position:relative; width:100%; height:100%;">
+        <!-- D3 globe renders into this SVG -->
+        <svg id="globe-svg" style="position:absolute;inset:0;width:100%;height:100%;"></svg>
 
-          <!-- Realistic base map from Figma (actual world geography) -->
-          <img class="map-base"
-               src="https://www.figma.com/api/mcp/asset/b8f21f74-87ba-4ea0-a9ad-c23da57886d6"
-               alt="World Map" />
+        <!-- Avatar bubbles — positioned via JS from projection coords -->
+        <div class="avatar-bubble" id="av-colombia"><img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Maria"/></div>
+        <div class="avatar-bubble" id="av-peru"><img src="https://randomuser.me/api/portraits/women/72.jpg" alt="Rosa"/></div>
+        <div class="avatar-bubble" id="av-senegal"><img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Amara"/></div>
+        <div class="avatar-bubble" id="av-kenya"><img src="https://randomuser.me/api/portraits/women/29.jpg" alt="Wanjiru"/></div>
+        <div class="avatar-bubble" id="av-india"><img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Priya"/></div>
+        <div class="avatar-bubble" id="av-philippines"><img src="https://randomuser.me/api/portraits/women/55.jpg" alt="Lena"/></div>
 
-          <!-- Graticule lines (cartographic grid) -->
-          <svg class="map-graticule" viewBox="0 0 1070 557" xmlns="http://www.w3.org/2000/svg">
-            <!-- Latitude lines every 30° -->
-            <line x1="0" y1="93"  x2="1070" y2="93"  stroke="white" stroke-opacity="0.28" stroke-width="0.6"/>
-            <line x1="0" y1="186" x2="1070" y2="186" stroke="white" stroke-opacity="0.28" stroke-width="0.6"/>
-            <!-- Equator — slightly bolder, dashed -->
-            <line x1="0" y1="279" x2="1070" y2="279" stroke="white" stroke-opacity="0.5"  stroke-width="0.9" stroke-dasharray="5,7"/>
-            <line x1="0" y1="371" x2="1070" y2="371" stroke="white" stroke-opacity="0.28" stroke-width="0.6"/>
-            <line x1="0" y1="464" x2="1070" y2="464" stroke="white" stroke-opacity="0.28" stroke-width="0.6"/>
-            <!-- Longitude lines every 30° -->
-            <line x1="89"  y1="0" x2="89"  y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
-            <line x1="178" y1="0" x2="178" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
-            <line x1="267" y1="0" x2="267" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
-            <line x1="357" y1="0" x2="357" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
-            <line x1="446" y1="0" x2="446" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
-            <line x1="535" y1="0" x2="535" y2="557" stroke="white" stroke-opacity="0.22" stroke-width="0.6"/><!-- prime meridian -->
-            <line x1="624" y1="0" x2="624" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
-            <line x1="713" y1="0" x2="713" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
-            <line x1="803" y1="0" x2="803" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
-            <line x1="892" y1="0" x2="892" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
-            <line x1="981" y1="0" x2="981" y2="557" stroke="white" stroke-opacity="0.18" stroke-width="0.5"/>
-            <!-- Tropic lines (23.5°) — subtle warm tint -->
-            <line x1="0" y1="206" x2="1070" y2="206" stroke="rgba(255,220,100,0.2)" stroke-width="0.5" stroke-dasharray="3,9"/>
-            <line x1="0" y1="352" x2="1070" y2="352" stroke="rgba(255,220,100,0.2)" stroke-width="0.5" stroke-dasharray="3,9"/>
-          </svg>
+        <!-- Region labels -->
+        <div class="map-label region-label" id="lbl-region-sa">SOUTH AMERICA</div>
+        <div class="map-label region-label" id="lbl-region-africa">AFRICA</div>
+        <div class="map-label region-label" id="lbl-region-asia">ASIA</div>
 
-          <!-- Vignette -->
-          <div class="map-vignette"></div>
-
-          <!-- ── COUNTRY COLOR OVERLAYS ── -->
-          <!-- South America -->
-          <div class="country-overlay" id="co-colombia" style="top:53.2%;right:75.83%;bottom:40.4%;left:20.21%;">
-            <img src="https://www.figma.com/api/mcp/asset/9df7b913-784d-41cc-a0c2-2befce9ba7a0" alt="Colombia"/>
-          </div>
-          <div class="country-overlay" id="co-ecuador" style="top:58.4%;right:77.71%;bottom:36.8%;left:20%;">
-            <img src="https://www.figma.com/api/mcp/asset/69ff3524-62d4-4562-a1ff-30992476bd6f" alt="Ecuador"/>
-          </div>
-          <div class="country-overlay" id="co-peru" style="top:62%;right:76.04%;bottom:29.6%;left:19.38%;">
-            <img src="https://www.figma.com/api/mcp/asset/bb062bd3-a2c8-40aa-97b9-713b2db265b6" alt="Peru"/>
-          </div>
-          <div class="country-overlay" id="co-bolivia" style="top:66.4%;right:74.58%;bottom:27.6%;left:21.88%;">
-            <img src="https://www.figma.com/api/mcp/asset/4a0ee7b8-523f-4678-820b-cf81bf1c70c7" alt="Bolivia"/>
-          </div>
-          <!-- Africa -->
-          <div class="country-overlay" id="co-senegal" style="top:36%;right:53.54%;bottom:58.4%;left:42.92%;">
-            <img src="https://www.figma.com/api/mcp/asset/887c8f1f-dc3f-484d-b71b-a85252f0a95b" alt="Senegal"/>
-          </div>
-          <div class="country-overlay" id="co-ghana" style="top:42.4%;right:50.62%;bottom:51.6%;left:45.63%;">
-            <img src="https://www.figma.com/api/mcp/asset/a3d85378-a0da-4590-b88e-5906dd86902e" alt="Ghana"/>
-          </div>
-          <div class="country-overlay" id="co-uganda" style="top:42.4%;right:41.88%;bottom:51.6%;left:54.58%;">
-            <img src="https://www.figma.com/api/mcp/asset/8d53b928-56b8-4328-9ae0-3dfd7b80f43f" alt="Uganda"/>
-          </div>
-          <div class="country-overlay" id="co-kenya" style="top:42%;right:39.58%;bottom:49.6%;left:56.25%;">
-            <img src="https://www.figma.com/api/mcp/asset/dc0222ae-65aa-458f-a04b-99fb6a8b8939" alt="Kenya"/>
-          </div>
-          <div class="country-overlay" id="co-rwanda" style="top:47.2%;right:42.92%;bottom:48.8%;left:54.79%;">
-            <img src="https://www.figma.com/api/mcp/asset/d3525b77-e413-48d9-8e8a-c89c5515828e" alt="Rwanda"/>
-          </div>
-          <div class="country-overlay" id="co-tanzania" style="top:49.6%;right:39.79%;bottom:43.2%;left:55.62%;">
-            <img src="https://www.figma.com/api/mcp/asset/f062ffc0-2427-456d-b2dd-11b368577186" alt="Tanzania"/>
-          </div>
-          <!-- Asia -->
-          <div class="country-overlay" id="co-tajikistan" style="top:25.6%;right:30.42%;bottom:68.8%;left:66.04%;">
-            <img src="https://www.figma.com/api/mcp/asset/58b3b87f-de46-4a2c-8d64-da56bb01bb29" alt="Tajikistan"/>
-          </div>
-          <div class="country-overlay" id="co-kyrgyzstan" style="top:23.2%;right:27.71%;bottom:71.2%;left:68.96%;">
-            <img src="https://www.figma.com/api/mcp/asset/bd143344-0f64-494a-8568-9b3490e58b24" alt="Kyrgyzstan"/>
-          </div>
-          <div class="country-overlay" id="co-india" style="top:30.8%;right:26.46%;bottom:52%;left:66.04%;">
-            <img src="https://www.figma.com/api/mcp/asset/ba1e8e11-c785-4788-bec5-fb419163706b" alt="India"/>
-          </div>
-          <div class="country-overlay" id="co-cambodia" style="top:42%;right:17.71%;bottom:52%;left:78.54%;">
-            <img src="https://www.figma.com/api/mcp/asset/f5d9163f-ce8c-4109-bcee-6f3bb56b95f9" alt="Cambodia"/>
-          </div>
-          <div class="country-overlay" id="co-philippines" style="top:38.8%;right:9.79%;bottom:54.4%;left:86.46%;">
-            <img src="https://www.figma.com/api/mcp/asset/9a63b232-392f-4146-98f4-40cef1308b53" alt="Philippines"/>
-          </div>
-
-          <!-- ── AVATAR BUBBLES ── -->
-          <div class="avatar-bubble" id="av-colombia" style="left:217px;top:286px;">
-            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Maria"/>
-          </div>
-          <div class="avatar-bubble" id="av-peru" style="left:211px;top:340px;">
-            <img src="https://randomuser.me/api/portraits/women/72.jpg" alt="Rosa"/>
-          </div>
-          <div class="avatar-bubble" id="av-senegal" style="left:457px;top:188px;">
-            <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Amara"/>
-          </div>
-          <div class="avatar-bubble" id="av-kenya" style="left:603px;top:229px;">
-            <img src="https://randomuser.me/api/portraits/women/29.jpg" alt="Wanjiru"/>
-          </div>
-          <div class="avatar-bubble" id="av-india" style="left:726px;top:191px;">
-            <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Priya"/>
-          </div>
-          <div class="avatar-bubble" id="av-philippines" style="left:924px;top:207px;">
-            <img src="https://randomuser.me/api/portraits/women/55.jpg" alt="Lena"/>
-          </div>
-
-          <!-- ── REGION LABELS ── -->
-          <div class="map-label region-label" id="lbl-region-sa"     style="left:148px; top:268px;">SOUTH AMERICA</div>
-          <div class="map-label region-label" id="lbl-region-africa"  style="left:468px; top:160px;">AFRICA</div>
-          <div class="map-label region-label" id="lbl-region-asia"    style="left:815px; top:112px;">ASIA</div>
-
-          <!-- ── COUNTRY LABELS — only where avatars appear ── -->
-          <div class="map-label country-label" id="lbl-colombia"    style="left:237px; top:332px; transform:translateX(-50%);">Colombia</div>
-          <div class="map-label country-label" id="lbl-peru"        style="left:231px; top:386px; transform:translateX(-50%);">Peru</div>
-          <div class="map-label country-label" id="lbl-senegal"     style="left:477px; top:234px; transform:translateX(-50%);">Senegal</div>
-          <div class="map-label country-label" id="lbl-kenya"       style="left:623px; top:275px; transform:translateX(-50%);">Kenya</div>
-          <div class="map-label country-label" id="lbl-india"       style="left:746px; top:237px; transform:translateX(-50%);">India</div>
-          <div class="map-label country-label" id="lbl-philippines" style="left:944px; top:253px; transform:translateX(-50%);">Philippines</div>
-
-        </div><!-- /.map-world -->
-      </div><!-- /.map-viewport -->
+        <!-- Country labels — only where avatars appear -->
+        <div class="map-label country-label" id="lbl-colombia">Colombia</div>
+        <div class="map-label country-label" id="lbl-peru">Peru</div>
+        <div class="map-label country-label" id="lbl-senegal">Senegal</div>
+        <div class="map-label country-label" id="lbl-kenya">Kenya</div>
+        <div class="map-label country-label" id="lbl-india">India</div>
+        <div class="map-label country-label" id="lbl-philippines">Philippines</div>
+      </div>
     </div><!-- /.map-box -->
 
     <button class="btn-outlined">Donate to see your global impact light up</button>
@@ -685,6 +501,8 @@
 </div><!-- /.container -->
 </div><!-- /.page -->
 
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson@3"></script>
 <script>
 // ─────────────────────────────────────────────────────────
 // CANCELLABLE TIMER — lets us break out of sleep() instantly
@@ -886,35 +704,231 @@ async function cardsLoop(timer) {
 }
 
 // ─────────────────────────────────────────────────────────
-// SECTION 2 — MAP
+// SECTION 2 — GLOBE (D3 orthographic)
 // ─────────────────────────────────────────────────────────
+
+// Geographic coordinates for each country/avatar
+const GEO = {
+  colombia:    { lon: -74,  lat:  4  },
+  ecuador:     { lon: -78,  lat: -2  },
+  peru:        { lon: -76,  lat: -10 },
+  bolivia:     { lon: -65,  lat: -17 },
+  senegal:     { lon: -14,  lat:  14 },
+  ghana:       { lon:  -1,  lat:   8 },
+  uganda:      { lon:  32,  lat:   1 },
+  kenya:       { lon:  37,  lat:   0 },
+  rwanda:      { lon:  30,  lat:  -2 },
+  tanzania:    { lon:  35,  lat:  -6 },
+  tajikistan:  { lon:  71,  lat:  39 },
+  kyrgyzstan:  { lon:  75,  lat:  41 },
+  india:       { lon:  78,  lat:  20 },
+  cambodia:    { lon: 105,  lat:  12 },
+  philippines: { lon: 122,  lat:  13 },
+};
+
+// ISO numeric IDs (TopoJSON world-atlas countries-110m.json)
+const COUNTRY_IDS = {
+  colombia: 170, ecuador: 218, peru: 604, bolivia: 68,
+  senegal: 686, ghana: 288, uganda: 800, kenya: 404, rwanda: 646, tanzania: 834,
+  tajikistan: 762, kyrgyzstan: 417, india: 356, cambodia: 116, philippines: 608,
+};
+
+// Region groups
 const SA  = ['colombia','ecuador','peru','bolivia'];
 const AFR = ['senegal','ghana','uganda','kenya','rwanda','tanzania'];
 const AS  = ['tajikistan','kyrgyzstan','india','cambodia','philippines'];
 
-function setLit(ids, on) {
-  ids.forEach(id => {
-    const co = document.getElementById(`co-${id}`);
-    if (co) co.classList.toggle('lit', on);
+// Region rotation targets [lon, lat] — center view on that region
+const REGION_ROTATION = {
+  sa:     [-68, -5],
+  africa: [ 22, -2],
+  asia:   [ 92, 12],
+};
+
+// Region label anchor coords
+const REGION_LABEL_GEO = {
+  'lbl-region-sa':     { lon: -68, lat:  12 },
+  'lbl-region-africa': { lon:  20, lat:  18 },
+  'lbl-region-asia':   { lon:  88, lat:  30 },
+};
+
+// Globe state
+let litCountries = new Set();   // country names currently lit
+let globeReady = false;
+let worldData = null;
+let geoCountries = [];
+let currentRotation = [0, -15];
+let rotationRAF = null;
+
+// D3 projection + path
+const SVG_W = 1072, SVG_H = 559;
+const GLOBE_R = 248;
+
+const projection = d3.geoOrthographic()
+  .scale(GLOBE_R)
+  .translate([SVG_W / 2, SVG_H / 2])
+  .clipAngle(90)
+  .rotate(currentRotation);
+
+const geoPath = d3.geoPath().projection(projection);
+const graticule = d3.geoGraticule()();
+
+// SVG layers
+const svg = d3.select('#globe-svg')
+  .attr('viewBox', `0 0 ${SVG_W} ${SVG_H}`)
+  .style('background', 'transparent');
+
+// Defs: ocean gradient + sphere clip
+const defs = svg.append('defs');
+
+// Ocean radial gradient
+const oceanGrad = defs.append('radialGradient')
+  .attr('id', 'ocean-grad')
+  .attr('cx', '38%').attr('cy', '35%').attr('r', '65%');
+oceanGrad.append('stop').attr('offset', '0%').attr('stop-color', '#4a89a8');
+oceanGrad.append('stop').attr('offset', '100%').attr('stop-color', '#1a3d52');
+
+// Atmosphere glow gradient
+const atmGrad = defs.append('radialGradient')
+  .attr('id', 'atm-grad')
+  .attr('cx', '50%').attr('cy', '50%').attr('r', '50%');
+atmGrad.append('stop').attr('offset', '82%').attr('stop-color', 'transparent');
+atmGrad.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(100,180,220,0.18)');
+
+// Sphere clip path
+defs.append('clipPath').attr('id', 'globe-clip')
+  .append('circle').attr('cx', SVG_W/2).attr('cy', SVG_H/2).attr('r', GLOBE_R);
+
+// Layer 1: ocean sphere
+svg.append('circle')
+  .attr('cx', SVG_W/2).attr('cy', SVG_H/2).attr('r', GLOBE_R)
+  .attr('fill', 'url(#ocean-grad)')
+  .attr('stroke', 'rgba(255,255,255,0.12)').attr('stroke-width', 1);
+
+// Layer 2: countries (clipped to sphere)
+const countriesGroup = svg.append('g').attr('clip-path', 'url(#globe-clip)');
+
+// Layer 3: graticule (clipped)
+const graticuleEl = svg.append('g').attr('clip-path', 'url(#globe-clip)')
+  .append('path')
+  .datum(graticule)
+  .attr('fill', 'none')
+  .attr('stroke', 'rgba(255,255,255,0.10)')
+  .attr('stroke-width', 0.4);
+
+// Layer 4: atmosphere glow (on top)
+svg.append('circle')
+  .attr('cx', SVG_W/2).attr('cy', SVG_H/2).attr('r', GLOBE_R + 1)
+  .attr('fill', 'url(#atm-grad)')
+  .attr('pointer-events', 'none');
+
+// Country fill logic
+function countryFill(name) {
+  if (litCountries.has(name)) return '#2aa967';
+  return '#c8bfaa';
+}
+function countryStroke(name) {
+  if (litCountries.has(name)) return '#1a7a48';
+  return '#b0a898';
+}
+
+// Redraw globe paths
+function redrawGlobe() {
+  projection.rotate(currentRotation);
+  graticuleEl.attr('d', geoPath(graticule));
+  countriesGroup.selectAll('path')
+    .attr('d', d => geoPath(d._feature))
+    .attr('fill', d => countryFill(d._name))
+    .attr('stroke', d => countryStroke(d._name))
+    .attr('filter', d => litCountries.has(d._name)
+      ? 'drop-shadow(0 0 8px rgba(42,169,103,0.75)) drop-shadow(0 0 18px rgba(42,169,103,0.40))'
+      : 'none');
+  updateOverlayPositions();
+}
+
+// Update avatar bubble + label positions from projection
+function updateOverlayPositions() {
+  // Avatar countries
+  const avatarCountries = ['colombia','peru','senegal','kenya','india','philippines'];
+  avatarCountries.forEach(name => {
+    const geo = GEO[name];
+    const pt = projection([geo.lon, geo.lat]);
+    const bubble = document.getElementById(`av-${name}`);
+    const lbl = document.getElementById(`lbl-${name}`);
+    if (!pt || !bubble) return;
+    // Check visibility (front of globe)
+    const [rx, ry] = currentRotation;
+    const dlon = geo.lon - (-rx);
+    const dlat = geo.lat - (-ry);
+    const onFront = Math.cos(dlon * Math.PI/180) * Math.cos(dlat * Math.PI/180) > 0.1;
+    bubble.style.left = (pt[0] - 20) + 'px';
+    bubble.style.top  = (pt[1] - 20) + 'px';
+    if (lbl) {
+      lbl.style.left = pt[0] + 'px';
+      lbl.style.top  = (pt[1] + 24) + 'px';
+    }
+  });
+
+  // Region labels
+  Object.entries(REGION_LABEL_GEO).forEach(([id, geo]) => {
+    const pt = projection([geo.lon, geo.lat]);
+    const el = document.getElementById(id);
+    if (!pt || !el) return;
+    el.style.left = pt[0] + 'px';
+    el.style.top  = pt[1] + 'px';
   });
 }
-function setAvatar(id, on) {
-  const el = document.getElementById(`av-${id}`);
+
+// Smooth rotation interpolation
+function rotateTo(targetRot, durationMs, onComplete) {
+  if (rotationRAF) cancelAnimationFrame(rotationRAF);
+  const startRot = [...currentRotation];
+  const t0 = performance.now();
+  const interp = d3.interpolate(startRot, targetRot);
+
+  function tick(now) {
+    const t = Math.min((now - t0) / durationMs, 1);
+    // ease in-out cubic
+    const e = t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+    currentRotation = interp(e);
+    redrawGlobe();
+    if (t < 1) {
+      rotationRAF = requestAnimationFrame(tick);
+    } else {
+      rotationRAF = null;
+      if (onComplete) onComplete();
+    }
+  }
+  rotationRAF = requestAnimationFrame(tick);
+}
+
+// setLit — toggle country lit state + redraw
+function setLit(names, on) {
+  names.forEach(name => {
+    if (on) litCountries.add(name);
+    else    litCountries.delete(name);
+  });
+  if (globeReady) redrawGlobe();
+}
+
+// setAvatar — toggle avatar bubble + country label
+function setAvatar(name, on) {
+  const el = document.getElementById(`av-${name}`);
   if (el) el.classList.toggle('visible', on);
-  const lbl = document.getElementById(`lbl-${id}`);
+  const lbl = document.getElementById(`lbl-${name}`);
   if (lbl) lbl.classList.toggle('lit', on);
 }
 
 function resetMap() {
-  [...SA, ...AFR, ...AS].forEach(id => setLit([id], false));
-  ['colombia','peru','senegal','kenya','india','philippines'].forEach(id => setAvatar(id, false));
-  // clear region labels
+  litCountries.clear();
+  if (rotationRAF) { cancelAnimationFrame(rotationRAF); rotationRAF = null; }
+  currentRotation = [0, -15];
+  ['colombia','peru','senegal','kenya','india','philippines'].forEach(n => setAvatar(n, false));
   ['lbl-region-sa','lbl-region-africa','lbl-region-asia'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.remove('lit');
   });
-  const w = document.getElementById('map-world');
-  if (w) { w.style.transition = 'none'; w.style.transform = 'none'; }
+  if (globeReady) redrawGlobe();
 }
 
 async function mapLoop(timer) {
@@ -922,36 +936,57 @@ async function mapLoop(timer) {
     resetMap();
     await timer.sleep(900);
 
-    // South America
+    // ── South America ──
     document.getElementById('lbl-region-sa')?.classList.add('lit');
+    await new Promise(resolve => rotateTo(REGION_ROTATION.sa, 1800, resolve));
     setLit(SA, true);
-    await timer.sleep(380); setAvatar('colombia', true);
-    await timer.sleep(380); setAvatar('peru', true);
-    await timer.sleep(1100);
+    await timer.sleep(300); setAvatar('colombia', true);
+    await timer.sleep(350); setAvatar('peru', true);
+    await timer.sleep(1200);
 
-    // Africa
+    // ── Africa ──
     document.getElementById('lbl-region-africa')?.classList.add('lit');
+    await new Promise(resolve => rotateTo(REGION_ROTATION.africa, 2000, resolve));
     setLit(AFR, true);
-    await timer.sleep(380); setAvatar('senegal', true);
-    await timer.sleep(380); setAvatar('kenya', true);
-    await timer.sleep(1500);
+    await timer.sleep(300); setAvatar('senegal', true);
+    await timer.sleep(350); setAvatar('kenya', true);
+    await timer.sleep(1400);
 
-    // Pan to Asia
-    const w = document.getElementById('map-world');
-    if (w) {
-      w.style.transition = 'transform 2s cubic-bezier(0.34, 1.12, 0.64, 1)';
-      w.style.transform  = 'scale(1.22) translateX(-14%)';
-    }
-    await timer.sleep(1600);
-
-    // Asia
+    // ── Asia ──
     document.getElementById('lbl-region-asia')?.classList.add('lit');
+    await new Promise(resolve => rotateTo(REGION_ROTATION.asia, 2000, resolve));
     setLit(AS, true);
-    await timer.sleep(380); setAvatar('india', true);
-    await timer.sleep(380); setAvatar('philippines', true);
+    await timer.sleep(300); setAvatar('india', true);
+    await timer.sleep(350); setAvatar('philippines', true);
     await timer.sleep(3000);
   }
 }
+
+// Load world data and initialize globe
+fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+  .then(r => r.json())
+  .then(world => {
+    worldData = world;
+    const idToName = {};
+    Object.entries(COUNTRY_IDS).forEach(([name, id]) => { idToName[id] = name; });
+
+    geoCountries = topojson.feature(world, world.objects.countries).features;
+
+    countriesGroup.selectAll('path')
+      .data(geoCountries)
+      .enter().append('path')
+      .each(function(d) {
+        d._name = idToName[+d.id] || null;
+        d._feature = d;
+      })
+      .attr('d', d => geoPath(d))
+      .attr('fill', d => d._name ? countryFill(d._name) : '#c0b8a5')
+      .attr('stroke', d => d._name ? countryStroke(d._name) : '#b0a898')
+      .attr('stroke-width', 0.5);
+
+    globeReady = true;
+    updateOverlayPositions();
+  });
 
 // ─────────────────────────────────────────────────────────
 // SECTION 3 — CHART
