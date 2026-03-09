@@ -507,25 +507,13 @@
           <div class="map-label region-label" id="lbl-region-africa"  style="left:468px; top:160px;">AFRICA</div>
           <div class="map-label region-label" id="lbl-region-asia"    style="left:815px; top:112px;">ASIA</div>
 
-          <!-- ── COUNTRY LABELS ── -->
-          <!-- South America -->
-          <div class="map-label country-label" id="lbl-colombia"   style="left:266px; top:308px;">Colombia</div>
-          <div class="map-label country-label" id="lbl-ecuador"    style="left:249px; top:335px;">Ecuador</div>
-          <div class="map-label country-label" id="lbl-peru"       style="left:265px; top:362px;">Peru</div>
-          <div class="map-label country-label" id="lbl-bolivia"    style="left:282px; top:382px;">Bolivia</div>
-          <!-- Africa -->
-          <div class="map-label country-label" id="lbl-senegal"    style="left:505px; top:210px;">Senegal</div>
-          <div class="map-label country-label" id="lbl-ghana"      style="left:534px; top:247px;">Ghana</div>
-          <div class="map-label country-label" id="lbl-uganda"     style="left:630px; top:247px;">Uganda</div>
-          <div class="map-label country-label" id="lbl-kenya"      style="left:654px; top:252px;">Kenya</div>
-          <div class="map-label country-label" id="lbl-rwanda"     style="left:617px; top:270px;">Rwanda</div>
-          <div class="map-label country-label" id="lbl-tanzania"   style="left:652px; top:289px;">Tanzania</div>
-          <!-- Asia -->
-          <div class="map-label country-label" id="lbl-tajikistan"  style="left:752px; top:148px;">Tajikistan</div>
-          <div class="map-label country-label" id="lbl-kyrgyzstan"  style="left:783px; top:133px;">Kyrgyzstan</div>
-          <div class="map-label country-label" id="lbl-india"       style="left:800px; top:212px;">India</div>
-          <div class="map-label country-label" id="lbl-cambodia"    style="left:892px; top:260px;">Cambodia</div>
-          <div class="map-label country-label" id="lbl-philippines" style="left:878px; top:225px;">Philippines</div>
+          <!-- ── COUNTRY LABELS — only where avatars appear ── -->
+          <div class="map-label country-label" id="lbl-colombia"    style="left:237px; top:332px; transform:translateX(-50%);">Colombia</div>
+          <div class="map-label country-label" id="lbl-peru"        style="left:231px; top:386px; transform:translateX(-50%);">Peru</div>
+          <div class="map-label country-label" id="lbl-senegal"     style="left:477px; top:234px; transform:translateX(-50%);">Senegal</div>
+          <div class="map-label country-label" id="lbl-kenya"       style="left:623px; top:275px; transform:translateX(-50%);">Kenya</div>
+          <div class="map-label country-label" id="lbl-india"       style="left:746px; top:237px; transform:translateX(-50%);">India</div>
+          <div class="map-label country-label" id="lbl-philippines" style="left:944px; top:253px; transform:translateX(-50%);">Philippines</div>
 
         </div><!-- /.map-world -->
       </div><!-- /.map-viewport -->
@@ -748,16 +736,15 @@ const AS  = ['tajikistan','kyrgyzstan','india','cambodia','philippines'];
 
 function setLit(ids, on) {
   ids.forEach(id => {
-    const co  = document.getElementById(`co-${id}`);
-    if (co)  co.classList.toggle('lit', on);
-    // also toggle the matching country label
-    const lbl = document.getElementById(`lbl-${id}`);
-    if (lbl) lbl.classList.toggle('lit', on);
+    const co = document.getElementById(`co-${id}`);
+    if (co) co.classList.toggle('lit', on);
   });
 }
 function setAvatar(id, on) {
   const el = document.getElementById(`av-${id}`);
   if (el) el.classList.toggle('visible', on);
+  const lbl = document.getElementById(`lbl-${id}`);
+  if (lbl) lbl.classList.toggle('lit', on);
 }
 
 function resetMap() {
