@@ -403,6 +403,112 @@
     transition: color 0.4s; min-width: 38px; text-align: right;
   }
   .cat-pct.active { color: #223829; font-weight: 500; }
+
+  /* ══════════════════════════════════════════
+     ENHANCED MOTION LAYER
+  ══════════════════════════════════════════ */
+
+  /* ── Section header entrance ── */
+  .section-label,
+  .section-h2,
+  .section-para {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.42, 0.64, 1);
+  }
+  .section-h2   { transition-delay: 0.07s; }
+  .section-para { transition-delay: 0.14s; }
+  section.entered .section-label,
+  section.entered .section-h2,
+  section.entered .section-para { opacity: 1; transform: none; }
+
+  /* ── Card reveal: light-burst shimmer sweep ── */
+  @keyframes shimmer-sweep {
+    0%   { transform: translateX(-140%) skewX(-12deg); }
+    100% { transform: translateX(340%) skewX(-12deg); }
+  }
+  .card-sweep {
+    position: absolute; inset: 0;
+    z-index: 20; pointer-events: none;
+    border-radius: 19px; overflow: hidden;
+  }
+  .card-sweep::after {
+    content: '';
+    position: absolute; top: 0; bottom: 0;
+    width: 55%;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255,255,255,0.0) 20%,
+      rgba(255,255,255,0.72) 50%,
+      rgba(255,255,255,0.0) 80%,
+      transparent 100%
+    );
+  }
+  .card-sweep.run::after {
+    animation: shimmer-sweep 0.72s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  /* ── Card color glow on reveal ── */
+  .borrower-card {
+    transition: box-shadow 0.5s ease;
+  }
+
+  /* ── Country overlay: pulsing glow when lit ── */
+  @keyframes country-pulse {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(42,169,103,0.40)); }
+    50%       { filter: drop-shadow(0 0 14px rgba(42,169,103,0.80)); }
+  }
+  .country-overlay.lit {
+    animation: country-pulse 2.8s ease-in-out infinite;
+  }
+  /* override the static ::after glow — pulse handles it */
+  .country-overlay.lit::after { display: none; }
+
+  /* ── Avatar bubble: overflow visible for pulse ring ── */
+  .avatar-bubble { overflow: visible; }
+  @keyframes av-pulse-ring {
+    0%   { transform: scale(1); opacity: 0.65; }
+    75%  { transform: scale(2.5); opacity: 0; }
+    100% { transform: scale(2.5); opacity: 0; }
+  }
+  .avatar-bubble::before {
+    content: '';
+    position: absolute; inset: -3px;
+    border-radius: 50%;
+    border: 2px solid rgba(42,169,103,0.55);
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .avatar-bubble.visible::before {
+    animation: av-pulse-ring 2.2s ease-out 0.35s infinite;
+  }
+
+  /* ── Avatar entrance: more dramatic spring ── */
+  .avatar-bubble {
+    transform: scale(0.15) translateY(8px);
+    transition: opacity 0.5s ease,
+                transform 0.5s cubic-bezier(0.34, 1.7, 0.64, 1);
+  }
+  .avatar-bubble.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  /* ── Category row: spring slide-in from left ── */
+  .category-row {
+    opacity: 0;
+    transform: translateX(-16px);
+    transition: opacity 0.42s ease, transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .category-row.row-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── Map pan: spring overshoot ── */
+  /* handled in JS with updated cubic-bezier */
 </style>
 </head>
 <body>
@@ -682,6 +788,7 @@ function buildCards() {
     const card = document.createElement('div');
     card.className = 'borrower-card';
     card.innerHTML = `
+      <div class="card-sweep" id="card-sweep-${i}"></div>
       <div class="card-empty" id="card-empty-${i}">
         <div class="avatar-placeholder">
           <svg viewBox="0 0 36 36" fill="none">
@@ -734,8 +841,10 @@ function resetCards() {
   for (let i = 0; i < 3; i++) {
     const empty = document.getElementById(`card-empty-${i}`);
     const real  = document.getElementById(`card-real-${i}`);
+    const card  = real?.closest('.borrower-card');
     if (empty) empty.style.opacity = '1';
     if (real)  real.classList.remove('visible');
+    if (card)  card.style.boxShadow = '';
   }
 }
 
@@ -744,6 +853,22 @@ function revealCard(i) {
   const real  = document.getElementById(`card-real-${i}`);
   if (empty) empty.style.opacity = '0';
   if (real)  real.classList.add('visible');
+
+  // Flash shimmer sweep
+  const sweep = document.getElementById(`card-sweep-${i}`);
+  if (sweep) {
+    sweep.classList.remove('run');
+    void sweep.offsetWidth; // force reflow
+    sweep.classList.add('run');
+  }
+
+  // Brief category color glow on card border
+  const card = real?.closest('.borrower-card');
+  const color = borrowers[i]?.color;
+  if (card && color) {
+    card.style.boxShadow = `0 0 0 2px ${color}55, 0 6px 32px ${color}30`;
+    setTimeout(() => { card.style.boxShadow = ''; }, 1300);
+  }
 }
 
 async function cardsLoop(timer) {
@@ -814,7 +939,7 @@ async function mapLoop(timer) {
     // Pan to Asia
     const w = document.getElementById('map-world');
     if (w) {
-      w.style.transition = 'transform 1.8s cubic-bezier(0.4,0,0.2,1)';
+      w.style.transition = 'transform 2s cubic-bezier(0.34, 1.12, 0.64, 1)';
       w.style.transform  = 'scale(1.22) translateX(-14%)';
     }
     await timer.sleep(1600);
@@ -852,6 +977,7 @@ function buildDonut(pcts) {
     el.setAttribute('stroke-width', '32');
     el.setAttribute('stroke-dasharray', `${dash} ${C - dash}`);
     el.setAttribute('stroke-dashoffset', (-offset * C).toString());
+    el.style.filter = `drop-shadow(0 0 5px ${categories[i].color}99)`;
     segs.appendChild(el);
     offset += frac;
   });
@@ -863,6 +989,14 @@ function buildDonut(pcts) {
   if (pEl) pEl.textContent = total + '%';
   if (sEl) sEl.textContent = total === 0 ? 'No categories yet'
                             : active === 1 ? '1 category' : `${active} categories`;
+
+  // Center label micro pop on each wave
+  const cl = document.querySelector('.donut-center-label');
+  if (cl && total > 0) {
+    cl.style.transition = 'transform 0.38s cubic-bezier(0.34,1.7,0.64,1)';
+    cl.style.transform  = 'translate(-50%,-50%) scale(1.08)';
+    setTimeout(() => { cl.style.transform = 'translate(-50%,-50%) scale(1)'; }, 380);
+  }
 }
 
 function animateDonutTo(targets, dur) {
@@ -887,10 +1021,24 @@ function animateDonutTo(targets, dur) {
   donutRafId = requestAnimationFrame(tick);
 }
 
+function staggerRows(fromIdx, toIdx) {
+  for (let i = fromIdx; i < toIdx; i++) {
+    const rows = document.querySelectorAll('.category-row');
+    if (rows[i]) {
+      rows[i].style.transitionDelay = `${(i - fromIdx) * 55}ms`;
+      rows[i].classList.add('row-in');
+    }
+  }
+}
+
 function resetChart() {
   if (donutRafId) cancelAnimationFrame(donutRafId);
   currentPcts = categories.map(() => 0);
   buildDonut(currentPcts);
+  document.querySelectorAll('.category-row').forEach(r => {
+    r.classList.remove('row-in');
+    r.style.transitionDelay = '0ms';
+  });
   categories.forEach((_, i) => {
     const el = document.getElementById(`cat-pct-${i}`);
     if (el) { el.textContent = '0%'; el.classList.remove('active'); }
@@ -904,14 +1052,17 @@ async function chartLoop(timer) {
 
     // Wave 1: first 4
     animateDonutTo(categories.map((c,i) => i < 4  ? c.pct : 0), 1100);
+    staggerRows(0, 4);
     await timer.sleep(2400);
 
     // Wave 2: first 8
     animateDonutTo(categories.map((c,i) => i < 8  ? c.pct : 0), 1100);
+    staggerRows(4, 8);
     await timer.sleep(2400);
 
     // Wave 3: all
     animateDonutTo(categories.map(c => c.pct), 1100);
+    staggerRows(8, categories.length);
     await timer.sleep(2800);
 
     await timer.sleep(500);
@@ -934,6 +1085,10 @@ const sectionMap = {
 // Trigger when >= 25% of the section is visible
 const io = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
+    // Section header entrance animation
+    if (entry.isIntersecting) entry.target.classList.add('entered');
+    else                       entry.target.classList.remove('entered');
+
     const animator = sectionMap[entry.target.id];
     if (!animator) return;
     if (entry.isIntersecting) animator.start();
